@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SRS Editor</title>
+</head>
+
+<body>
+
+<div id="container">
+
+    <div id="header">
+        <h1>Edit Software Requirements Specification</h1>
+    </div>
+
+    <div id="navigation">
+
+        <button onclick="location.href='dashboard.html'">
+        Back to Dashboard
+        </button>
+
+        <button onclick="location.href='preview.html'">
+        Preview SRS
+        </button>
+
+    </div>
+
+    <hr>
+
+    <form action="/save_srs" method="POST">
+
+        <div class="section">
+
+            <h2>1. Introduction</h2>
+
+            <label>Purpose</label><br>
+            <textarea name="purpose"></textarea><br><br>
+
+            <label>Scope</label><br>
+            <textarea name="scope"></textarea><br><br>
+
+        </div>
+
+        <hr>
+
+        <div class="section">
+
+            <h2>2. Overall Description</h2>
+
+            <label>Product Perspective</label><br>
+            <textarea name="perspective"></textarea><br><br>
+
+            <label>Product Functions</label><br>
+            <textarea name="functions"></textarea><br><br>
+
+        </div>
+
+        <hr>
+
+        <div class="section">
+
+            <h2>3. Functional Requirements</h2>
+
+            <textarea name="functional_requirements"></textarea>
+
+        </div>
+
+        <hr>
+
+        <div class="section">
+
+            <h2>4. Non Functional Requirements</h2>
+
+            <textarea name="nonfunctional_requirements"></textarea>
+
+        </div>
+
+        <br>
+
+        <button type="submit">Save Progress</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

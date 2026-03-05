@@ -1,115 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Automated Software Requirements Specification Generator</title>
+<title>SRS Generator - Login</title>
 </head>
 
 <body>
 
-<h1>Automated Software Requirements Specification Generator</h1>
-<p>Fill in the following details to automatically generate a Software Requirements Specification (SRS).</p>
+<div id="container">
 
-<hr>
+    <div id="header">
+        <h1>Automated Software Requirements Specification Generator</h1>
+    </div>
 
-<h2>1. Project Information</h2>
+    <div id="login_section">
 
-<label>Project Title:</label><br>
-<input type="text" name="project_title"><br><br>
+        <h2>Login</h2>
 
-<label>Project Description:</label><br>
-<textarea name="project_description" rows="4" cols="60"></textarea><br><br>
+        <form action="/login" method="POST">
 
-<label>Project Stakeholders:</label><br>
-<textarea name="stakeholders" rows="3" cols="60"></textarea><br><br>
+            <label>Email:</label><br>
+            <input type="email" name="email"><br><br>
 
-<hr>
+            <label>Password:</label><br>
+            <input type="password" name="password"><br><br>
 
-<h2>2. Introduction</h2>
+            <button type="submit">Login</button>
 
-<h3>2.1 Purpose</h3>
-<textarea rows="4" cols="60" placeholder="Describe the purpose of this document"></textarea><br><br>
+        </form>
 
-<h3>2.2 Scope</h3>
-<textarea rows="4" cols="60" placeholder="Describe the scope of the system"></textarea><br><br>
+    </div>
 
-<h3>2.3 Definitions, Acronyms, Abbreviations</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
+    <hr>
 
-<hr>
+    <div id="signup_section">
 
-<h2>3. Overall Description</h2>
+        <h2>Create Account</h2>
 
-<h3>3.1 Product Perspective</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
+        <form action="/signup" method="POST">
 
-<h3>3.2 Product Functions</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
+            <label>Name:</label><br>
+            <input type="text" name="name"><br><br>
 
-<h3>3.3 User Classes and Characteristics</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
+            <label>Email:</label><br>
+            <input type="email" name="email"><br><br>
 
-<h3>3.4 Operating Environment</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
+            <label>Password:</label><br>
+            <input type="password" name="password"><br><br>
 
-<h3>3.5 Design and Implementation Constraints</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
+            <button type="submit">Sign Up</button>
 
-<h3>3.6 Assumptions and Dependencies</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
+        </form>
 
-<hr>
+    </div>
 
-<h2>4. System Features</h2>
-
-<label>Feature 1:</label><br>
-<textarea rows="3" cols="60"></textarea><br><br>
-
-<label>Feature 2:</label><br>
-<textarea rows="3" cols="60"></textarea><br><br>
-
-<label>Feature 3:</label><br>
-<textarea rows="3" cols="60"></textarea><br><br>
-
-<hr>
-
-<h2>5. Functional Requirements</h2>
-
-<textarea rows="6" cols="70" placeholder="Example: The system shall allow users to create an account."></textarea><br><br>
-
-<hr>
-
-<h2>6. Non-Functional Requirements</h2>
-
-<h3>6.1 Performance Requirements</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
-
-<h3>6.2 Security Requirements</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
-
-<h3>6.3 Usability Requirements</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
-
-<hr>
-
-<h2>7. External Interface Requirements</h2>
-
-<h3>7.1 User Interfaces</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
-
-<h3>7.2 Hardware Interfaces</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
-
-<h3>7.3 Software Interfaces</h3>
-<textarea rows="4" cols="60"></textarea><br><br>
-
-<hr>
-
-<h2>8. Other Requirements</h2>
-<textarea rows="4" cols="60"></textarea><br><br>
-
-<hr>
-
-<input type="submit" value="Generate SRS">
+</div>
 
 </body>
 </html>
+
