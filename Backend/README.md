@@ -21,6 +21,7 @@ To run this project manually without Maven/Gradle, you must download the followi
 
 - **MySQL Connector/J**: [mysql-connector-j-9.1.0.jar](https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/9.1.0/mysql-connector-j-9.1.0.jar)
 - **Dotenv Java**: [dotenv-java-3.0.0.jar](https://repo1.maven.org/maven2/io/github/cdimascio/dotenv-java/3.0.0/dotenv-java-3.0.0.jar)
+- **Tomcat Servlet API**: [tomcat-servlet-api-9.0.55.jar](https://repo1.maven.org/maven2/org/apache/tomcat/tomcat-servlet-api/9.0.55/tomcat-servlet-api-9.0.55.jar)
   
 ## ⚙️ Setup Instructions
 
