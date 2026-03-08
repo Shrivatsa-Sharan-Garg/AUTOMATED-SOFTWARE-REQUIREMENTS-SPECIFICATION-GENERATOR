@@ -97,6 +97,18 @@ h1, h2, h3 {
     transition: background-color .25s;
 }
 
+.project_card button:disabled {
+    background-color: #d1d1d1 !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    border: 1px solid #bbb;
+    opacity: 0.7;
+}
+
+.project_card button:disabled:hover {
+    background-color: #d1d1d1 !important;
+}
+
 .project_card button:hover {
     background-color: #218838;
 }

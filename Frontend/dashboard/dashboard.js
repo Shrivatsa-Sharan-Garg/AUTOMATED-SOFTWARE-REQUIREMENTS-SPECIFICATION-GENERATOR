@@ -11,13 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         projects.forEach((proj, index) => {
+            const srsData = localStorage.getItem('srsData_' + index);
+            const isDisabled = srsData ? '' : 'disabled';
+            
             const card = document.createElement('div');
             card.className = 'project_card';
             card.innerHTML = `
                 <h3>${proj.name}</h3>
                 <div class="card-actions">
                     <button onclick="editProject(${index})">Edit SRS</button>
-                    <button onclick="previewProject(${index})">Preview SRS</button>
+                    <button onclick="previewProject(${index})" ${isDisabled}>Preview SRS</button>
                     <button class="btn-delete" onclick="deleteProject(${index})">Delete</button>
                 </div>
             `;
