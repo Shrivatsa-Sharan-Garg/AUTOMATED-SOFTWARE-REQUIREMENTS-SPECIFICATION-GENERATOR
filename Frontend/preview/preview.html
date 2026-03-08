@@ -1,63 +1,58 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>SRS Preview</title>
-<link rel="stylesheet" href="preview.css">
+    <title>SRS Preview</title>
+    <link rel="stylesheet" href="preview.css">
 </head>
 
 <body>
 
-<div id="container">
+    <div id="container">
+        <div id="header">
+            <h1 id="preview-title">SRS Preview</h1>
+        </div>
 
-    <div id="header">
-        <h1>SRS Preview</h1>
+        <div id="navigation">
+            <button onclick="location.href='../srs_form/srs_form.html'">Edit Again</button>
+            <button onclick="location.href='../dashboard/dashboard.html'">Back to Dashboard</button>
+        </div>
+
+        <hr>
+
+        <div id="preview_content">
+            <h2>1. Introduction</h2>
+            <h3>1.1 Purpose</h3>
+            <p id="disp-purpose">Loading...</p>
+
+            <h3>1.4 Project Scope</h3>
+            <p id="disp-scope">Loading...</p>
+
+            <h2>2. Overall Description</h2>
+            <h3>2.1 Product Perspective</h3>
+            <p id="disp-perspective">Loading...</p>
+
+            <h3>2.2 Product Functions</h3>
+            <p id="disp-functions">Loading...</p>
+
+            <h2>3. Functional Requirements</h2>
+            <p id="disp-functional">Loading...</p>
+
+            <h2>4. Non Functional Requirements</h2>
+            <p id="disp-nonfunctional">Loading...</p>
+        </div>
+
+        <hr>
+
+        <div id="export_section">
+            <form action="/generate_pdf" method="POST">
+                <button type="submit">Download PDF</button>
+            </form>
+        </div>
     </div>
 
-    <div id="navigation">
-
-        <button onclick="location.href='../srs_form/srs_form.html'">
-        Edit Again
-        </button>
-
-        <button onclick="location.href='../dashboard/dashboard.html'">
-        Back to Dashboard
-        </button>
-
-    </div>
-
-    <hr>
-
-    <div id="preview_content">
-
-        <h2>Introduction</h2>
-        <p>[Purpose from database]</p>
-
-        <h2>Scope</h2>
-        <p>[Scope from database]</p>
-
-        <h2>Functional Requirements</h2>
-        <p>[Functional requirements here]</p>
-
-        <h2>Non Functional Requirements</h2>
-        <p>[Non functional requirements here]</p>
-
-    </div>
-
-    <hr>
-
-    <div id="export_section">
-
-        <form action="/generate_pdf" method="POST">
-
-            <button type="submit">
-            Download PDF
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
+    <script src="./preview.js"></script>
 
 </body>
+
 </html>

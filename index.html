@@ -1,68 +1,69 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>SRS Generator - Login</title>
-<link rel="stylesheet" type="text/css" href="index.css">
+    <title>SRS Generator - Login</title>
+    <link rel="stylesheet" type="text/css" href="./Frontend/main/style.css">
 </head>
 
 <body>
 
-<div id="container">
+    <div id="container">
 
-    <div id="header">
-        <h1>Automated Software Requirements Specification Generator</h1>
-    </div>
-
-    <div id="tab-buttons">
-        <button id="login-tab" class="tab-btn active">Login</button>
-        <button id="signup-tab" class="tab-btn">Sign Up</button>
-    </div>
-
-    <div id="auth-container">
-        <div id="login_section" class="auth-section active">
-
-            <h2>Login</h2>
-
-            <form action="/login" method="POST">
-
-                <label>Email:</label><br>
-                <input type="email" name="email"><br><br>
-
-                <label>Password:</label><br>
-                <input type="password" name="password"><br><br>
-
-                <button type="submit">Login</button>
-
-            </form>
-
+        <div id="header">
+            <h1>Automated Software Requirements Specification Generator</h1>
         </div>
 
-        <div id="signup_section" class="auth-section">
-
-            <h2>Create Account</h2>
-
-            <form action="/signup" method="POST">
-
-                <label>Name:</label><br>
-                <input type="text" name="name" ><br><br>
-
-                <label>Email:</label><br>
-                <input type="email" name="email" ><br><br>
-
-                <label>Password:</label><br>
-                <input type="password" name="password" ><br><br>
-
-                <button type="submit">Sign Up</button>
-
-            </form>
-
+        <div id="tab-buttons">
+            <button id="login-tab" class="tab-btn active">Login</button>
+            <button id="signup-tab" class="tab-btn">Sign Up</button>
         </div>
+
+        <div id="auth-container">
+            <div id="login_section" class="auth-section active">
+
+                <h2>Login</h2>
+
+                <form action="/login" method="POST">
+
+                    <label>Email:</label><br>
+                    <input type="email" name="email" required><br><br>
+
+                    <label>Password:</label><br>
+                    <input type="password" name="password" required><br><br>
+
+                    <button type="submit">Login</button>
+
+                </form>
+
+            </div>
+
+            <div id="signup_section" class="auth-section">
+
+                <h2>Create Account</h2>
+
+                <form action="/signup" method="POST">
+
+                    <label>Name:</label><br>
+                    <input type="text" name="name" required><br><br>
+
+                    <label>Email:</label><br>
+                    <input type="email" name="email" required><br><br>
+
+                    <label>Password:</label><br>
+                    <input type="password" name="password" required><br><br>
+
+                    <button type="submit">Sign Up</button>
+
+                </form>
+
+            </div>
+        </div>
+
     </div>
 
-</div>
-
-
+<script src="./Frontend/main/script.js"></script>
 
 </body>
-</html>
 
+</html>

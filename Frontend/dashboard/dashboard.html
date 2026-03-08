@@ -1,69 +1,40 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Dashboard</title>
-<link rel="stylesheet" href="dashboard.css">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 
 <body>
 
-<div id="container">
+    <div id="container">
 
-    <div id="header">
-        <h1>Project Dashboard</h1>
-    </div>
-
-    <div id="navigation">
-
-        <button onclick="location.href='../srs_form/srs_form.html'">
-        Create New Project
-        </button>
-
-        <button onclick="location.href='../../index.html'">
-        Logout
-        </button>
-
-    </div>
-
-    <hr>
-
-    <div id="projects_list">
-
-        <h2>Your Projects</h2>
-
-        <div class="project_card">
-
-            <h3>Online Banking System</h3>
-
-            <button onclick="location.href='../srs_form/srs_form.html'">
-            Edit SRS
-            </button>
-
-            <button onclick="location.href='../preview/preview.html'">
-            Preview SRS
-            </button>
-
+        <div id="header">
+            <h1>Project Dashboard</h1>
         </div>
 
-        <br>
-
-        <div class="project_card">
-
-            <h3>Hospital Management System</h3>
-
-            <button onclick="location.href='../srs_form/srs_form.html'">
-            Edit SRS
+        <div id="navigation">
+            <button onclick="createNewProject()">
+                Create New Project
             </button>
 
-            <button onclick="location.href='../preview/preview.html'">
-            Preview SRS
+            <button onclick="location.href='../../index.html'">
+                Logout
             </button>
+        </div>
 
+        <hr>
+
+        <div id="projects_list">
+            <h2>Your Projects</h2>
+            <div id="cards-container"></div>
         </div>
 
     </div>
 
-</div>
+    <script src="dashboard.js"></script>
 
 </body>
+
 </html>

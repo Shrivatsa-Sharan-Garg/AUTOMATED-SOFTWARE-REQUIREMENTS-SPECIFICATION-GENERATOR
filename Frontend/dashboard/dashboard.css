@@ -70,14 +70,23 @@ h1, h2, h3 {
     border-radius: 6px;
     padding: 15px;
     margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .project_card h3 {
-    margin-bottom: 10px;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
 }
 
 .project_card button {
-    margin-right: 8px;
+    margin: 0;
     padding: 6px 14px;
     font-size: 0.9rem;
     border: none;
@@ -92,6 +101,13 @@ h1, h2, h3 {
     background-color: #218838;
 }
 
+.btn-delete {
+    background-color: #dc3545 !important;
+}
+
+.btn-delete:hover {
+    background-color: #c82333 !important;
+}
 /* ==== misc ==== */
 hr {
     border: 0;
