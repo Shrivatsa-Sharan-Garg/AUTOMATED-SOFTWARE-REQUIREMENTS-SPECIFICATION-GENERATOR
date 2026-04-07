@@ -2,6 +2,7 @@ package com.srs.api;
 
 import com.sun.net.httpserver.*;
 import com.srs.db.DBconnections;
+import com.lowagie.text.DocumentException; 
 import java.io.*;
 import java.nio.file.*;
 import java.sql.*;
@@ -31,9 +32,9 @@ public class handler implements HttpHandler {
         if (path.equals("/api/get-template") && "GET".equalsIgnoreCase(method)) {
             try {
                 String template = Files.readString(Paths.get("src/resources/srs_template.json"));
-                sendResponse(exchange, template, 200);
+                sendResponse(exchange, template, 200, "application/json");
             } catch (Exception e) {
-                sendResponse(exchange, "{\"error\":\"Template missing\"}", 500);
+                sendResponse(exchange, "{\"error\":\"Template missing\"}", 500, "application/json");
             }
         } 
         else if (path.equals("/api/signup") && "POST".equalsIgnoreCase(method)) {
@@ -45,10 +46,37 @@ public class handler implements HttpHandler {
         else if (path.equals("/api/save-srs") && "POST".equalsIgnoreCase(method)) {
             String body = readRequestBody(exchange);
             boolean saved = saveToDb(body);
-            sendResponse(exchange, saved ? "{\"status\":\"success\"}" : "{\"status\":\"error\"}", saved ? 200 : 500);
+            sendResponse(exchange, saved ? "{\"status\":\"success\"}" : "{\"status\":\"error\"}", saved ? 200 : 500, "application/json");
         } 
+        else if (path.equals("/api/download-pdf") && "POST".equalsIgnoreCase(method)) {
+            handleDownloadPdf(exchange);
+        }
         else {
-            sendResponse(exchange, "{\"error\":\"Not Found\"}", 404);
+            sendResponse(exchange, "{\"error\":\"Not Found\"}", 404, "application/json");
+        }
+    }
+
+    private void handleDownloadPdf(HttpExchange exchange) throws IOException {
+        String body = readRequestBody(exchange);
+        String projectName = getJsonValue(body, "Project");
+        String author = getJsonValue(body, "author");
+        
+        if (projectName.isEmpty()) projectName = "Unnamed Project";
+        if (author.isEmpty()) author = "Anonymous";
+
+        try {
+            byte[] pdfBytes = DocumentGenerator.generateIEEEReport(projectName, author, body);
+            
+            exchange.getResponseHeaders().set("Content-Type", "application/pdf");
+            exchange.getResponseHeaders().set("Content-Disposition", "attachment; filename=SRS_Report.pdf");
+            exchange.sendResponseHeaders(200, pdfBytes.length);
+            
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(pdfBytes);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendResponse(exchange, "{\"error\":\"PDF Generation Failed: " + e.getMessage() + "\"}", 500, "application/json");
         }
     }
 
@@ -65,13 +93,13 @@ public class handler implements HttpHandler {
                 pstmt.setString(2, email);
                 pstmt.setString(3, password);
                 pstmt.executeUpdate();
-                sendResponse(exchange, "{\"message\":\"Signup successful! Please login.\"}", 200);
+                sendResponse(exchange, "{\"message\":\"Signup successful! Please login.\"}", 200, "application/json");
             }
         } catch (SQLException e) {
             if (e.getMessage().contains("UNIQUE")) {
-                sendResponse(exchange, "{\"error\":\"User already exists\"}", 400);
+                sendResponse(exchange, "{\"error\":\"User already exists\"}", 400, "application/json");
             } else {
-                sendResponse(exchange, "{\"error\":\"Database error\"}", 500);
+                sendResponse(exchange, "{\"error\":\"Database error\"}", 500, "application/json");
             }
         }
     }
@@ -90,13 +118,13 @@ public class handler implements HttpHandler {
 
                 if (rs.next()) {
                     String userJson = "{\"message\":\"Welcome back!\", \"user\":{\"email\":\"" + rs.getString("username") + "\"}}";
-                    sendResponse(exchange, userJson, 200);
+                    sendResponse(exchange, userJson, 200, "application/json");
                 } else {
-                    sendResponse(exchange, "{\"error\":\"Invalid credentials\", \"code\":\"USER_NOT_FOUND\"}", 401);
+                    sendResponse(exchange, "{\"error\":\"Invalid credentials\", \"code\":\"USER_NOT_FOUND\"}", 401, "application/json");
                 }
             }
         } catch (SQLException e) {
-            sendResponse(exchange, "{\"error\":\"Database error\"}", 500);
+            sendResponse(exchange, "{\"error\":\"Database error\"}", 500, "application/json");
         }
     }
 
@@ -104,7 +132,8 @@ public class handler implements HttpHandler {
         try {
             int keyIndex = json.indexOf("\"" + key + "\"");
             if (keyIndex == -1) return "";
-            int valueStart = json.indexOf(":", keyIndex) + 2;
+            int valueStart = json.indexOf(":", keyIndex);
+            valueStart = json.indexOf("\"", valueStart) + 1;
             int valueEnd = json.indexOf("\"", valueStart);
             return json.substring(valueStart, valueEnd);
         } catch (Exception e) { return ""; }
@@ -118,8 +147,8 @@ public class handler implements HttpHandler {
         }
     }
 
-    private void sendResponse(HttpExchange exchange, String response, int code) throws IOException {
-        exchange.getResponseHeaders().set("Content-Type", "application/json");
+    private void sendResponse(HttpExchange exchange, String response, int code, String contentType) throws IOException {
+        exchange.getResponseHeaders().set("Content-Type", contentType);
         byte[] bytes = response.getBytes();
         exchange.sendResponseHeaders(code, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
@@ -128,20 +157,18 @@ public class handler implements HttpHandler {
     }
 
     private boolean saveToDb(String data) {
-    try {
-        String sql = Files.readString(Paths.get("src/sql/insert_srs.sql"));
-        try (Connection conn = db.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try {
+            String sql = Files.readString(Paths.get("src/sql/insert_srs.sql"));
+            try (Connection conn = db.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, 1);   
                 pstmt.setString(2, data);
                 pstmt.setString(3, "1.0");
-                
                 pstmt.executeUpdate();
                 return true;
+            }
+        } catch (Exception e) {
+            System.err.println("❌ DB Error: " + e.getMessage());
+            return false;
         }
-    } catch (Exception e) {
-        System.err.println("❌ DB Error: " + e.getMessage());
-        e.printStackTrace(); 
-        return false;
     }
-}
 }

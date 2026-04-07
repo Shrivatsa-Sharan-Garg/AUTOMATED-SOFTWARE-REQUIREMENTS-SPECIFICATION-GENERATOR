@@ -19,6 +19,7 @@ public class Main {
         server.createContext("/api/signup", new handler(db));
         server.createContext("/api/save-srs", new handler(db));
         server.createContext("/api/get-template", new handler(db)); 
+        server.createContext("/api/download-pdf", new handler(db));
 
         System.out.println("🚀 Sovereign Engine active at http://localhost:8080");
         server.setExecutor(null);

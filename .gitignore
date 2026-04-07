@@ -3,3 +3,5 @@ lib/
 .env
 .env.*
 Backend/src/db
+Backend/bin/
+bin/
