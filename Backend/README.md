@@ -82,3 +82,8 @@ How to connect:
 - [x] **Pragmatic JSON Parsing**: Lightweight, vanilla Java implementation for extracting data without heavy libraries.
 
 ---
+
+## ⚖️ License
+
+This project is licensed under the **GNU General Public License v3.0**.
+See the [LICENSE](LICENSE) file for the full text.
