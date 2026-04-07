@@ -1,40 +1,30 @@
-<!DOCTYPE html>
-<html>
-
-<head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-    <link rel="stylesheet" href="dashboard.css">
-</head>
-
-<body>
-
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
     <div id="container">
+      <div id="header">
+        <h1>Project Dashboard</h1>
+      </div>
 
-        <div id="header">
-            <h1>Project Dashboard</h1>
-        </div>
+      <div id="navigation">
+        <button onclick="createNewProject()">Create New Project</button>
+        <button onclick="location.href = '../../index.html'">Logout</button>
+      </div>
 
-        <div id="navigation">
-            <button onclick="createNewProject()">
-                Create New Project
-            </button>
+      <hr />
 
-            <button onclick="location.href='../../index.html'">
-                Logout
-            </button>
-        </div>
-
-        <hr>
-
-        <div id="projects_list">
-            <h2>Your Projects</h2>
-            <div id="cards-container"></div>
-        </div>
-
+      <div id="projects_list">
+        <h2>Your Projects</h2>
+        <div id="cards-container"></div>
+      </div>
     </div>
 
     <script src="dashboard.js"></script>
-
-</body>
-
+  </body>
 </html>

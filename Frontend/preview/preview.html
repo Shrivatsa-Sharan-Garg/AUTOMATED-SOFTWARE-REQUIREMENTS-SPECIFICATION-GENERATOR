@@ -1,58 +1,39 @@
-<!DOCTYPE html>
-<html>
-
-<head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SRS Preview</title>
-    <link rel="stylesheet" href="preview.css">
-</head>
-
-<body>
-
+    <link rel="stylesheet" href="preview.css" />
+  </head>
+  <body>
     <div id="container">
-        <div id="header">
-            <h1 id="preview-title">SRS Preview</h1>
-        </div>
+      <div id="header" class="no-print">
+        <h1 id="preview-title">SRS Preview</h1>
+      </div>
 
-        <div id="navigation">
-            <button onclick="location.href='../srs_form/srs_form.html'">Edit Again</button>
-            <button onclick="location.href='../dashboard/dashboard.html'">Back to Dashboard</button>
-        </div>
+      <div id="navigation" class="no-print">
+        <button onclick="location.href = '../srs_form/srs_form.html'">
+          Edit Again
+        </button>
+        <button onclick="location.href = '../dashboard/dashboard.html'">
+          Dashboard
+        </button>
+        <button onclick="downloadAsDoc()" class="export-btn">
+          Download .DOC
+        </button>
+        <button onclick="window.print()" class="export-btn">
+          Print to PDF
+        </button>
+      </div>
 
-        <hr>
+      <hr class="no-print" />
 
-        <div id="preview_content">
-            <h2>1. Introduction</h2>
-            <h3>1.1 Purpose</h3>
-            <p id="disp-purpose">Loading...</p>
-
-            <h3>1.4 Project Scope</h3>
-            <p id="disp-scope">Loading...</p>
-
-            <h2>2. Overall Description</h2>
-            <h3>2.1 Product Perspective</h3>
-            <p id="disp-perspective">Loading...</p>
-
-            <h3>2.2 Product Functions</h3>
-            <p id="disp-functions">Loading...</p>
-
-            <h2>3. Functional Requirements</h2>
-            <p id="disp-functional">Loading...</p>
-
-            <h2>4. Non Functional Requirements</h2>
-            <p id="disp-nonfunctional">Loading...</p>
-        </div>
-
-        <hr>
-
-        <div id="export_section">
-            <form action="/generate_pdf" method="POST">
-                <button type="submit">Download PDF</button>
-            </form>
-        </div>
+      <div id="preview_content" class="document-page">
+        <p>Loading document data...</p>
+      </div>
     </div>
 
-    <script src="./preview.js"></script>
-
-</body>
-
+    <script src="preview.js"></script>
+  </body>
 </html>

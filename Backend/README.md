@@ -1,63 +1,74 @@
-# JDBC Project
+# SRS Generator Backend
 
-A Java-based backend setup for managing MySQL databases using JDBC and environment variables.
+The core Java backend for the Automated SRS Generator. This engine handles HTTP requests, manages the SQLite database lifecycle, and serves SRS templates.
 
 ## 📂 Project Structure
 
 ```text
-JDBC/
-└── backend/
-    ├── lib/                # External libraries (.jar)
-    ├── src/                # Source code
-    │   ├── sql/            # SQL scripts
-    │   └── CreateDB.java   # Main initialization logic
-    ├── bin/                # Compiled .class files (auto-generated)
-    └── .env                # Environment configuration
+Backend/
+├── bin/                 # Compiled .class files
+├── lib/                 # External Dependencies (.jar)
+├── src/                 # Source Code
+│   ├── com/srs/         # Main Java Packages
+│   ├── db/              # Auto-generated SQLite Database (srs.db)
+│   ├── resources/       # JSON Templates
+│   ├── sql/             # Initialization & Query Scripts
+│   └── .env             # Environment Configuration
+└── README.md
 ```
 
 ## 🛠️ Prerequisites & Dependencies
 
 To run this project manually without Maven/Gradle, you must download the following JAR files and place them in the `backend/lib/` folder:
 
-- **MySQL Connector/J**: [mysql-connector-j-9.1.0.jar](https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/9.1.0/mysql-connector-j-9.1.0.jar)
+- **sqlite-jdbc-3.45.2.0.jar**: [sqlite-jdbc-3.45.2.0.jar](https://www.google.com/search?q=https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.45.2.0/sqlite-jdbc-3.45.2.0.jar)
 - **Dotenv Java**: [dotenv-java-3.0.0.jar](https://repo1.maven.org/maven2/io/github/cdimascio/dotenv-java/3.0.0/dotenv-java-3.0.0.jar)
 - **Tomcat Servlet API**: [tomcat-servlet-api-9.0.55.jar](https://repo1.maven.org/maven2/org/apache/tomcat/tomcat-servlet-api/9.0.55/tomcat-servlet-api-9.0.55.jar)
-  
+- Logging (Required for SQLite):
+  - [slf4j-api-1.7.36.jar](https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar)
+  - [slf4j-simple-1.7.36.jar](https://repo1.maven.org/maven2/org/slf4j/slf4j-simple/1.7.36/slf4j-simple-1.7.36.jar)
+
 ## ⚙️ Setup Instructions
 
-### Environment Configuration
-Create a `.env` file in the `backend/src/` directory with the following variables:
+1. Environment Configuration
+   Create a `.env` file in the `backend/src/` directory with the following variables:
 
 ```env
-DB_URL=jdbc:mysql://localhost:3306/
-DB_USER=your_username
-DB_PASS=your_password
+DB_URL=jdbc:sqlite:src/db/srs.db
 ```
 
-## 🚀 Compilation and Execution
-Run these commands from the `backend/` directory in your terminal:
+2. 🚀 Compilation and Execution
+   Run these commands from the `backend/` directory in your terminal:
 
-**Compile:**
-```powershell
-javac -d bin -cp "lib/*" src/CreateDB.java
+```cmd
+javac -cp "lib/*;bin" -d bin src/com/srs/Main.java src/com/srs/db/DBconnections.java src/com/srs/api/handler.java
 ```
- **Command Breakdown**
-* **`-d bin`**: Directs the compiled `.class` files into the `bin` folder.
-* **`-cp "lib/*"`**: Includes all JAR files in the library folder in the compilation classpath.
 
-**Run:**
-```powershell
-java -cp "bin;lib/*" CreateDB
+3. Running the Server
+
+```cmd
+java -cp "bin;lib/*" com.srs.Main
 ```
-* **`"bin;lib/*"`**: Tells the Java Virtual Machine to look for your code in `bin` and dependencies in `lib`.
 
-
+The engine will automatically create the `/db` folder and initialize the schema if it doesn't exist.
 
 ---
 
-## 📝 Features
-* [x] **Automated Database Creation**: Checks for database existence before creation.
-* [x] **Environment Management**: Securely loads credentials via `.env`.
-* [x] **SQL Script Execution**: Reads and executes complex SQL from external files.
+## 📊 Database Management
+
+For visualizing data within VS Code, it is highly recommended to use the MySQL/SQLite Client extension:
+🔗 [Download: MySQL/SQLite Client for VS Code](https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-mysql-client2)
+How to connect:
+
+- Open the extension sidebar.
+- Click **Add Connection** -> Select **SQLite**.
+- Point the Database Path to `Backend/src/db/srs.db`.
+
+## 📝 Backend Features
+
+- [x] **Self-Healing Infrastructure**: Auto-creates database directories and missing `.db` files.
+- [x] **Safe Stream Handling**: Implements `Try-With-Resources` to prevent memory leaks.
+- [x] **CORS Enabled**: Pre-configured to allow requests from the Frontend dashboard.
+- [x] **Dynamic SQL Loading**: Reads schema and insert queries from external `.sql` files for modularity.
 
 ---
