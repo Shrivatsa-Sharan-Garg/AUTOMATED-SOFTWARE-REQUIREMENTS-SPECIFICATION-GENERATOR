@@ -26,6 +26,7 @@ To run this project manually without Maven/Gradle, you must download the followi
 
 - [sqlite-jdbc-3.45.2.0.jar](https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.45.2.0/sqlite-jdbc-3.45.2.0.jar)
 - [dotenv-java-3.0.0.jar](https://repo1.maven.org/maven2/io/github/cdimascio/dotenv-java/3.0.0/dotenv-java-3.0.0.jar)
+- [gson-2.10.1.jar](https://repo1.maven.org/maven2/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar)
 - [tomcat-servlet-api-9.0.55.jar](https://repo1.maven.org/maven2/org/apache/tomcat/tomcat-servlet-api/9.0.55/tomcat-servlet-api-9.0.55.jar)
 - [slf4j-api-1.7.36.jar](https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar)
 - [slf4j-simple-1.7.36.jar](https://repo1.maven.org/maven2/org/slf4j/slf4j-simple/1.7.36/slf4j-simple-1.7.36.jar)
@@ -48,7 +49,7 @@ DB_URL=jdbc:sqlite:src/db/srs.db
    Run these commands from the `backend/` directory in your terminal:
 
 ```cmd
-javac -cp "lib/*" -d bin src/com/srs/Main.java src/com/srs/db/*.java src/com/srs/api/*.java
+javac -cp "lib/*;bin" -d bin src/com/srs/Main.java src/com/srs/db/*.java src/com/srs/api/*.java
 ```
 
 3. Running the Server
