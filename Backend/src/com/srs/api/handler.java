@@ -6,8 +6,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.sql.*;
 import java.util.stream.Collectors;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 
 public class handler implements HttpHandler {
     private DBconnections db;
@@ -72,7 +71,7 @@ public class handler implements HttpHandler {
         }
 
         if (projectId == -1) {
-            sendResponse(exchange, "{\"error\":\"project_id required or invalid\"}", 400, "application/json");
+            sendResponse(exchange, "{\"error\":\"project_id required\"}", 400, "application/json");
             return;
         }
 
@@ -97,7 +96,6 @@ public class handler implements HttpHandler {
             }
         } catch (Exception e) {
             System.err.println("DB Fetch Error for project " + projectId + ": " + e.getMessage());
-            e.printStackTrace(); 
             sendResponse(exchange, "{\"error\":\"Database fetch error\"}", 500, "application/json");
         }
     } 

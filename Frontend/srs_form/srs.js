@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const template = await templateRes.json();
-
     let savedData = {};
     const savedText = await savedDataRes.text();
     if (savedText && savedText.trim().startsWith("{")) {
@@ -39,87 +38,175 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderForm(sections, savedData) {
     form.innerHTML = "";
+    const getVal = (key, def = "") =>
+      savedData && savedData[key] !== undefined ? savedData[key] : def;
 
-    const getSavedValue = (fieldName, defaultValue = "") => {
-      return savedData && savedData[fieldName] !== undefined
-        ? savedData[fieldName]
-        : defaultValue;
+    const metaDiv = document.createElement("div");
+    metaDiv.className = "section metadata-section";
+    metaDiv.innerHTML = `
+      <h2>Document Metadata</h2>
+      <div class="meta-grid">
+        <label>Organization: <input type="text" name="meta.org" value="${getVal("meta.org")}"></label>
+        <label>Version: <input type="text" name="meta.version" value="${getVal("meta.version", "1.0 Approved")}"></label>
+        <label>Authors (Comma separated): <input type="text" name="meta.authors" value="${getVal("meta.authors")}" placeholder="Name 1, Name 2"></label>
+        <label>Release Date: <input type="date" name="meta.date" value="${getVal("meta.date")}"></label>
+      </div>
+    `;
+    form.appendChild(metaDiv);
+
+    const revDiv = document.createElement("div");
+    revDiv.className = "section revision-section";
+    revDiv.innerHTML = `
+      <h2>Revision History</h2>
+      <table id="rev-table" style="width:100%; border-collapse: collapse;">
+        <thead><tr><th>Name/Author</th><th>Date</th><th>Reason</th><th>Version</th><th></th></tr></thead>
+        <tbody id="rev-body"></tbody>
+      </table>
+      <button type="button" id="add-rev-row" style="margin-top:10px; cursor:pointer;">+ Add Revision</button>
+    `;
+    form.appendChild(revDiv);
+
+    const addRevRow = (idx, data = {}) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><input type="text" name="rev.name.${idx}" value="${data.name || ""}"></td>
+        <td><input type="date" name="rev.date.${idx}" value="${data.date || ""}"></td>
+        <td><input type="text" name="rev.reason.${idx}" value="${data.reason || ""}"></td>
+        <td><input type="text" name="rev.ver.${idx}" value="${data.ver || ""}" style="width:60px;"></td>
+        <td><button type="button" class="del-row" style="color:red; border:none; background:none; cursor:pointer;">✖</button></td>
+      `;
+      tr.querySelector(".del-row").onclick = () => {
+        tr.remove();
+        triggerAutoSave();
+      };
+      document.getElementById("rev-body").appendChild(tr);
     };
 
+    let revCount = Object.keys(savedData).filter((k) =>
+      k.startsWith("rev.name."),
+    ).length;
+    if (revCount > 0) {
+      for (let i = 0; i < revCount; i++)
+        addRevRow(i, {
+          name: savedData[`rev.name.${i}`],
+          date: savedData[`rev.date.${i}`],
+          reason: savedData[`rev.reason.${i}`],
+          ver: savedData[`rev.ver.${i}`],
+        });
+    } else {
+      addRevRow(0);
+    }
+    document.getElementById("add-rev-row").onclick = () =>
+      addRevRow(document.getElementById("rev-body").children.length);
+
     for (let sectionKey in sections) {
-      const sectionData = sections[sectionKey];
       if (sectionKey === "appendices") {
-        for (let appKey in sectionData) {
-          createSectionUI(appKey, sectionData[appKey]);
-        }
+        for (let appKey in sections[sectionKey])
+          createSectionUI(appKey, sections[sectionKey][appKey]);
       } else {
-        createSectionUI(sectionKey, sectionData);
+        createSectionUI(sectionKey, sections[sectionKey]);
       }
     }
 
     function createSectionUI(key, data) {
       const sectionDiv = document.createElement("div");
       sectionDiv.className = "section";
-      const displayTitle = data.title || key.replace(/_/g, " ").toUpperCase();
-      sectionDiv.innerHTML = `<h2>${displayTitle}</h2>`;
+      sectionDiv.id = `section-${key}`;
+      sectionDiv.innerHTML = `<h2>${data.title || key.replace(/_/g, " ").toUpperCase()}</h2>`;
 
       if (data.instruction) {
-        const instr = document.createElement("p");
-        instr.className = "instruction-text";
-        instr.innerHTML = `&lt;${data.instruction}&gt;`;
-        sectionDiv.appendChild(instr);
+        sectionDiv.innerHTML += `<p class="instruction-text">&lt;${data.instruction}&gt;</p>`;
       }
 
       if (data.hasOwnProperty("content")) {
         const fieldName = `${key}.content`;
-        const div = document.createElement("div");
-        div.innerHTML = `<textarea name="${fieldName}">${getSavedValue(fieldName, data.content)}</textarea><br><br>`;
-        sectionDiv.appendChild(div);
+        sectionDiv.innerHTML += `<textarea name="${fieldName}">${getVal(fieldName, data.content)}</textarea><br><br>`;
       } else {
         for (let subKey in data) {
           if (["title", "instruction", "features"].includes(subKey)) continue;
           const field = data[subKey];
           if (field && typeof field === "object") {
-            const fieldName = `${key}.${subKey}`;
-            const div = document.createElement("div");
-            div.innerHTML = `
-                <label><strong>${field.label || subKey}</strong></label><br>
-                <textarea name="${fieldName}">${getSavedValue(fieldName, field.content)}</textarea><br><br>
-            `;
-            sectionDiv.appendChild(div);
+            const fName = `${key}.${subKey}`;
+            sectionDiv.innerHTML += `<label><strong>${field.label || subKey}</strong></label><br>
+                <textarea name="${fName}">${getVal(fName, field.content)}</textarea><br><br>`;
           }
         }
       }
 
-      if (data.features && Array.isArray(data.features)) {
-        data.features.forEach((feat, i) => {
+      if (key === "3_functional_requirements" || data.features) {
+        const featContainer = document.createElement("div");
+        featContainer.className = "features-container";
+        sectionDiv.appendChild(featContainer);
+
+        const addFeatUI = (idx, featData = {}) => {
+          const dK = `${key}.feature_${idx}_desc`,
+            sK = `${key}.feature_${idx}_stimulus`,
+            fK = `${key}.feature_${idx}_functional`;
           const featDiv = document.createElement("div");
           featDiv.className = "feature-block";
-          const dK = `${key}.feature_${i}_desc`,
-            sK = `${key}.feature_${i}_stimulus`,
-            fK = `${key}.feature_${i}_functional`;
-
+          featDiv.style =
+            "border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; position: relative;";
           featDiv.innerHTML = `
-            <h3>Feature: ${feat.feature_name}</h3>
-            <textarea name="${dK}">${getSavedValue(dK, feat["3.1.1_priority"])}</textarea>
-            <textarea name="${sK}">${getSavedValue(sK, feat["3.1.2_stimulus"])}</textarea>
-            <textarea name="${fK}">${getSavedValue(fK, feat["3.1.3_functional_reqs"])}</textarea>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3>System Feature ${idx + 1}</h3>
+                <button type="button" class="del-feat" style="color:red; border:none; background:none; cursor:pointer;">Remove Feature ✖</button>
+            </div>
+            <label>Description/Priority</label>
+            <textarea name="${dK}" placeholder="Enter feature name and priority">${getVal(dK, featData.desc || "")}</textarea>
+            <label>Stimulus/Response</label>
+            <textarea name="${sK}" placeholder="How does system respond to trigger?">${getVal(sK, featData.stimulus || "")}</textarea>
+            <label>Functional Requirements</label>
+            <textarea name="${fK}" placeholder="Specific functional details">${getVal(fK, featData.functional || "")}</textarea>
           `;
-          sectionDiv.appendChild(featDiv);
-        });
+          featDiv.querySelector(".del-feat").onclick = () => {
+            featDiv.remove();
+            triggerAutoSave();
+          };
+          featContainer.appendChild(featDiv);
+        };
+
+        let featCount = Object.keys(savedData).filter(
+          (k) => k.startsWith(`${key}.feature_`) && k.endsWith("_desc"),
+        ).length;
+
+        if (featCount > 0) {
+          for (let i = 0; i < featCount; i++) {
+            addFeatUI(i, {
+              desc: savedData[`${key}.feature_${i}_desc`],
+              stimulus: savedData[`${key}.feature_${i}_stimulus`],
+              functional: savedData[`${key}.feature_${i}_functional`],
+            });
+          }
+        } else if (data.features) {
+          data.features.forEach((f, i) =>
+            addFeatUI(i, {
+              desc: f["3.1.1_priority"],
+              stimulus: f["3.1.2_stimulus"],
+              functional: f["3.1.3_functional_reqs"],
+            }),
+          );
+        }
+
+        const addFeatBtn = document.createElement("button");
+        addFeatBtn.type = "button";
+        addFeatBtn.innerText = "+ Add System Feature";
+        addFeatBtn.style =
+          "background: #28a745; color: white; padding: 10px; margin-top: 10px; cursor:pointer;";
+        addFeatBtn.onclick = () => addFeatUI(featContainer.children.length);
+        sectionDiv.appendChild(addFeatBtn);
       }
+
       form.appendChild(sectionDiv);
     }
 
     const saveBtn = document.createElement("button");
     saveBtn.type = "submit";
-    saveBtn.innerText = "Final Save";
+    saveBtn.innerText = "Save Now";
     form.appendChild(saveBtn);
-    status.innerText = "Ready. ✨";
   }
 
   let timeout = null;
-  form.addEventListener("input", () => {
+  const triggerAutoSave = () => {
     status.innerText = "Typing...";
     clearTimeout(timeout);
     timeout = setTimeout(async () => {
@@ -144,7 +231,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         status.innerText = "Server unreachable.";
       }
     }, 1500);
-  });
+  };
 
+  form.addEventListener("input", triggerAutoSave);
   form.onsubmit = (e) => e.preventDefault();
 });
