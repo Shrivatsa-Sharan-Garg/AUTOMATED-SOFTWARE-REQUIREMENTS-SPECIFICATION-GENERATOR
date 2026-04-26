@@ -36,6 +36,15 @@ To run this project manually without Maven/Gradle, you must download the followi
 - [xmlbeans-5.2.0.jar](https://repo1.maven.org/maven2/org/apache/xmlbeans/xmlbeans/5.2.0/xmlbeans-5.2.0.jar)
 - [commons-collections4-4.4.jar](https://repo1.maven.org/maven2/org/apache/commons/commons-collections4/4.4/commons-collections4-4.4.jar)
 
+## ⚡ Recommended Setup in VS Code
+
+Instead of manually downloading JARs, you can install the  
+[No-Build Java Power Pack 🛒☕](https://marketplace.visualstudio.com/items?itemName=SudhanshuAmbastha.vscode-java-pack-no-build).
+
+Lightweight Java extension pack for students and prototypers — run Java instantly without Maven or Gradle.  
+Includes JAR Cart for zero‑config dependency management plus essential tools (Red Hat Java, Debugger, Test Runner, Code Runner, Oracle Java).  
+Perfect for quick setups, assignments, and high‑speed prototyping.
+
 ## ⚙️ Setup Instructions
 
 1. Environment Configuration
