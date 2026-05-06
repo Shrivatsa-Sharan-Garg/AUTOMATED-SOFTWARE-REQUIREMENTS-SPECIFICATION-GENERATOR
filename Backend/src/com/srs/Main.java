@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 
 public class Main { 
     public static void main(String[] args) throws Exception {
-        Dotenv dotenv = Dotenv.configure().directory("./src").load();
+        Dotenv dotenv = Dotenv.configure().directory(".").load();
         String dbUrl = dotenv.get("DB_URL");
         DBconnections db = new DBconnections(dbUrl); 
 
