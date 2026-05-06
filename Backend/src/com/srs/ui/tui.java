@@ -31,7 +31,7 @@ public class tui {
 
     private void showAuthMenu(){
         while(currentUser==null){
-            System.out.println("\n------ AUTH MENU ------");
+            System.out.println("\n------ User Authentication Menu ------");
             System.out.println("1. Login");
             System.out.println("2. Sign Up");
             System.out.println("3. Exit");
