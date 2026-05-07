@@ -1,0 +1,48 @@
+graph TD
+    %% Start Node
+    Start((Start)) --> Init[Initialize SQLite DB & Load .env]
+    
+    %% Template Loading
+    Init --> LoadJSON[Load srs_template.json]
+    
+    %% Main Menu Choice
+    LoadJSON --> Menu{User Selection}
+
+    %% Option 1: Edit/Generate SRS
+    Menu -- "1. Edit SRS" --> CheckDB{Record Exists?}
+    CheckDB -- Yes --> FetchData[Fetch content_json from DB]
+    CheckDB -- No --> EmptyData[Initialize Empty JsonObject]
+    
+    FetchData --> Flatten[Recursive Parser: JSON to .txt Form]
+    EmptyData --> Flatten
+    
+    Flatten --> UserEdit[/User Edits .txt File in External Editor/]
+    UserEdit --> Sync[User Confirms Sync]
+    
+    Sync --> ParseTxt[Parse .txt back to JSON]
+    ParseTxt --> SQLUpdate[Execute insert_srs.sql]
+    SQLUpdate --> Cleanup[Delete Temporary .txt File]
+    Cleanup --> Menu
+
+    %% Option 2: Preview
+    Menu -- "2. Preview SRS" --> SQLGet[Execute get_srs.sql]
+    SQLGet --> CreatePreview[Generate Temporary Preview .txt]
+    CreatePreview --> ViewPreview[/User Reviews Content/]
+    ViewPreview --> DeletePreview[Purge Preview File]
+    DeletePreview --> Menu
+
+    %% Option 3: Export PDF
+    Menu -- "3. Export PDF" --> PDFGen[DocumentGenerator: Render IEEE PDF]
+    PDFGen --> ViewPDF[/User Views Output in PDF Viewer/]
+    ViewPDF --> Menu
+
+    %% Exit
+    Menu -- "4. Exit" --> End((End))
+
+    %% Styling
+    style Start fill:#f9f,stroke:#333,stroke-width:2px
+    style End fill:#f9f,stroke:#333,stroke-width:2px
+    style Menu fill:#bbf,stroke:#333,stroke-width:2px
+    style UserEdit fill:#fff4dd,stroke:#d4a017,stroke-width:2px
+    style ViewPreview fill:#fff4dd,stroke:#d4a017,stroke-width:2px
+    style ViewPDF fill:#fff4dd,stroke:#d4a017,stroke-width:2px
