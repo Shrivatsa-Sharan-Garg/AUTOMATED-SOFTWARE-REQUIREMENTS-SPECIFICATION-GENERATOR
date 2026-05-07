@@ -7,7 +7,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-public class tui {
+public class tui{
     private DBconnections db;
     private Scanner scn;
     private String currentUser=null;
@@ -240,46 +240,52 @@ public class tui {
 
     private void handleFileEdit(int pid){
         try{
-            JsonObject obj=new JsonObject();
+            String templatePath="src/resources/srs_template.json";
+            JsonObject template=JsonParser.parseString(
+                java.nio.file.Files.readString(java.nio.file.Paths.get(templatePath))
+            ).getAsJsonObject();
 
-            System.out.println("\nSRS INPUT");
+            JsonObject result=new JsonObject();
 
-            System.out.print("Purpose: ");
-            obj.addProperty("purpose",scn.nextLine());
+            System.out.println("\n========== SRS INPUT ==========\n");
 
-            System.out.print("Scope: ");
-            obj.addProperty("scope",scn.nextLine());
+            processJson(template,result,"");
 
-            System.out.print("Audience: ");
-            obj.addProperty("audience",scn.nextLine());
+            saveToDb(pid,result.toString());
 
-            System.out.print("Functions: ");
-            obj.addProperty("functions",scn.nextLine());
-
-            System.out.print("Constraints: ");
-            obj.addProperty("constraints",scn.nextLine());
-
-            System.out.print("Assumptions: ");
-            obj.addProperty("assumptions",scn.nextLine());
-
-            System.out.print("Functional Requirements: ");
-            obj.addProperty("functional_requirements",scn.nextLine());
-
-            System.out.print("Non Functional Requirements: ");
-            obj.addProperty("nonfunctional_requirements",scn.nextLine());
-
-            System.out.print("Security: ");
-            obj.addProperty("security",scn.nextLine());
-
-            System.out.print("Other: ");
-            obj.addProperty("other",scn.nextLine());
-
-            saveToDb(pid,obj.toString());
-
-            System.out.println("Saved.");
+            System.out.println("\nSRS saved successfully.");
         }
         catch(Exception e){
             System.out.println("Error.");
+        }
+    }
+
+    private void processJson(JsonObject template,JsonObject result,String prefix){
+        for(Map.Entry<String,JsonElement> entry:template.entrySet()){
+            String key=entry.getKey();
+            JsonElement value=entry.getValue();
+
+            if(value.isJsonObject()){
+                JsonObject obj=value.getAsJsonObject();
+
+                if(obj.has("content")){
+                    String label=obj.has("label")?obj.get("label").getAsString():key;
+                    String instruction=obj.has("instruction")?obj.get("instruction").getAsString():"";
+
+                    System.out.println("\n"+label);
+
+                    if(!instruction.equals("")){
+                        System.out.println("("+instruction+")");
+                    }
+
+                    System.out.print("Enter: ");
+                    String input=scn.nextLine();
+
+                    result.addProperty(prefix+key,input);
+                }
+
+                processJson(obj,result,prefix+key+".");
+            }
         }
     }
 
@@ -299,14 +305,42 @@ public class tui {
                     return;
                 }
 
-                System.out.println("\n----- PREVIEW -----\n");
+                System.out.println("\n----- SRS PREVIEW -----\n");
 
                 JsonObject obj=JsonParser.parseString(json).getAsJsonObject();
 
+                String lastSection="";
+
                 for(Map.Entry<String,JsonElement> entry:obj.entrySet()){
-                    System.out.println(entry.getKey().toUpperCase());
-                    System.out.println(entry.getValue().getAsString());
-                    System.out.println();
+                    String key=entry.getKey();
+                    String value=entry.getValue().getAsString();
+
+                    key=key.replace("sections.","");
+
+                    String[] parts=key.split("\\.");
+
+                    if(parts.length>=1){
+                        String sectionPart=parts[0];
+                        String[] secSplit=sectionPart.split("_",2);
+
+                        String secNumber=secSplit[0];
+                        String secName=secSplit.length>1?secSplit[1]:"";
+
+                        String sectionDisplay=secNumber+". "+secName.replace("_"," ");
+
+                        if(!sectionDisplay.equals(lastSection)){
+                            System.out.println("\n"+sectionDisplay.toUpperCase());
+                            lastSection=sectionDisplay;
+                        }
+                    }
+
+                    String lastPart=parts[parts.length-1];
+                    String[] subSplit=lastPart.split("_",2);
+
+                    String subDisplay=subSplit[0]+". "+(subSplit.length>1?subSplit[1]:"");
+
+                    System.out.println("  "+subDisplay);
+                    System.out.println("    "+value+"\n");
                 }
             }
         }
@@ -364,31 +398,31 @@ public class tui {
     }
 
     private void handleDeleteProject(int pid){
-    System.out.print("Are you sure you want to delete this project? (yes/no): ");
-    String confirm=scn.nextLine();
+        System.out.print("Are you sure you want to delete this project? (yes/no): ");
+        String confirm=scn.nextLine();
 
-    if(!confirm.equalsIgnoreCase("yes")){
-        System.out.println("Cancelled.");
-        return;
+        if(!confirm.equalsIgnoreCase("yes")){
+            System.out.println("Cancelled.");
+            return;
+        }
+
+        try(Connection conn=db.getConnection()){
+            String sql1="DELETE FROM srs_docs WHERE project_id=?";
+            PreparedStatement ps1=conn.prepareStatement(sql1);
+            ps1.setInt(1,pid);
+            ps1.executeUpdate();
+
+            String sql2="DELETE FROM projects WHERE id=?";
+            PreparedStatement ps2=conn.prepareStatement(sql2);
+            ps2.setInt(1,pid);
+            ps2.executeUpdate();
+
+            System.out.println("Project deleted successfully.");
+        }
+        catch(Exception e){
+            System.out.println("Delete failed.");
+        }
     }
-
-    try(Connection conn=db.getConnection()){
-        String sql1="DELETE FROM srs_docs WHERE project_id=?";
-        PreparedStatement ps1=conn.prepareStatement(sql1);
-        ps1.setInt(1,pid);
-        ps1.executeUpdate();
-
-        String sql2="DELETE FROM projects WHERE id=?";
-        PreparedStatement ps2=conn.prepareStatement(sql2);
-        ps2.setInt(1,pid);
-        ps2.executeUpdate();
-
-        System.out.println("Project deleted successfully.");
-    }
-    catch(Exception e){
-        System.out.println("Delete failed.");
-    }
-}
 
     private void saveToDb(int pid,String json){
         try(Connection conn=db.getConnection()){
