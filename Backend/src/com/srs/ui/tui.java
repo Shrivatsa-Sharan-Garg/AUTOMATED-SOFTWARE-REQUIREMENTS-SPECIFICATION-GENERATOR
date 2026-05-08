@@ -3,7 +3,6 @@ package com.srs.ui;
 import com.srs.db.DBconnections;
 import com.srs.api.DocumentGenerator;
 import com.google.gson.*;
-import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -19,280 +18,181 @@ public class tui{
     }
 
     public void start(){
-        System.out.println("\n=======================================");
-        System.out.println("     SOVEREIGN SRS ENGINE (CLI)        ");
-        System.out.println("=======================================\n");
-
         while(currentUser==null){
-            showAuthMenu();
+            authMenu();
         }
-        showDashboard();
+        dashboard();
     }
 
-    private void showAuthMenu(){
+    private void authMenu(){
         while(currentUser==null){
-            System.out.println("\n------ User Authentication Menu ------");
-            System.out.println("1. Login");
-            System.out.println("2. Sign Up");
-            System.out.println("3. Exit");
-            System.out.print("Select option: ");
+            System.out.println("1.Login");
+            System.out.println("2.Signup");
+            System.out.println("3.Exit");
+            String ch=scn.nextLine();
 
-            String choice=scn.nextLine();
-
-            if(choice.equals("1")){
-                handleLogin();
-            }
-            else if(choice.equals("2")){
-                handleSignup();
-            }
-            else if(choice.equals("3")){
-                System.exit(0);
-            }
-            else{
-                System.out.println("Invalid input.");
-            }
+            if(ch.equals("1")) login();
+            else if(ch.equals("2")) signup();
+            else if(ch.equals("3")) System.exit(0);
         }
     }
 
-    private void handleLogin(){
-        System.out.print("\nUsername: ");
-        String user=scn.nextLine();
+    private void login(){
+        System.out.print("Username:");
+        String u=scn.nextLine();
+        System.out.print("Password:");
+        String p=scn.nextLine();
 
-        System.out.print("Password: ");
-        String pass=scn.nextLine();
-
-        try(Connection conn=db.getConnection()){
-            String sql="SELECT id,username FROM users WHERE username=? AND password=?";
-            PreparedStatement ps=conn.prepareStatement(sql);
-            ps.setString(1,user);
-            ps.setString(2,pass);
+        try(Connection c=db.getConnection()){
+            String q="select id,username from users where username=? and password=?";
+            PreparedStatement ps=c.prepareStatement(q);
+            ps.setString(1,u);
+            ps.setString(2,p);
 
             ResultSet rs=ps.executeQuery();
 
             if(rs.next()){
-                currentUserId=rs.getInt("id");
                 currentUser=rs.getString("username");
-                System.out.println("\nWelcome "+currentUser);
+                currentUserId=rs.getInt("id");
+                System.out.println("Welcome "+currentUser);
+            }else{
+                System.out.println("Invalid");
             }
-            else{
-                System.out.println("Invalid credentials.");
-            }
-        }
-        catch(Exception e){
-            System.out.println("Error.");
-        }
+        }catch(Exception e){}
     }
 
-    private void handleSignup(){
-        System.out.print("\nFull Name: ");
-        String name=scn.nextLine();
+    private void signup(){
+        System.out.print("Name:");
+        String n=scn.nextLine();
+        System.out.print("Username:");
+        String u=scn.nextLine();
+        System.out.print("Password:");
+        String p=scn.nextLine();
 
-        System.out.print("Username: ");
-        String user=scn.nextLine();
-
-        System.out.print("Password: ");
-        String pass=scn.nextLine();
-
-        try(Connection conn=db.getConnection()){
-            String sql="INSERT INTO users (full_name,username,password) VALUES (?,?,?)";
-            PreparedStatement ps=conn.prepareStatement(sql);
-
-            ps.setString(1,name);
-            ps.setString(2,user);
-            ps.setString(3,pass);
-
+        try(Connection c=db.getConnection()){
+            String q="insert into users(full_name,username,password) values(?,?,?)";
+            PreparedStatement ps=c.prepareStatement(q);
+            ps.setString(1,n);
+            ps.setString(2,u);
+            ps.setString(3,p);
             ps.executeUpdate();
-
-            System.out.println("Account created.");
-        }
-        catch(Exception e){
-            System.out.println("Signup failed.");
-        }
+            System.out.println("Created");
+        }catch(Exception e){}
     }
 
-    private void showDashboard(){
+    private void dashboard(){
         while(true){
-            System.out.println("\n=======================================");
-            System.out.println("Dashboard | "+currentUser);
-            System.out.println("=======================================");
+            System.out.println("1.Create");
+            System.out.println("2.View");
+            System.out.println("3.Logout");
+            String ch=scn.nextLine();
 
-            System.out.println("1. Create Project");
-            System.out.println("2. View Projects");
-            System.out.println("3. Logout");
-
-            System.out.print("Select: ");
-            String choice=scn.nextLine();
-
-            if(choice.equals("1")){
-                createProject();
-            }
-            else if(choice.equals("2")){
-                listProjects();
-            }
-            else if(choice.equals("3")){
+            if(ch.equals("1")) createProject();
+            else if(ch.equals("2")) listProjects();
+            else if(ch.equals("3")){
                 currentUser=null;
-                currentUserId=-1;
                 return;
-            }
-            else{
-                System.out.println("Invalid choice.");
             }
         }
     }
 
     private void createProject(){
-        System.out.print("\nProject name: ");
+        System.out.print("Project:");
         String name=scn.nextLine();
 
-        try(Connection conn=db.getConnection()){
-            String sql="INSERT INTO projects (user_id,project_name) VALUES (?,?)";
-            PreparedStatement ps=conn.prepareStatement(sql);
-
+        try(Connection c=db.getConnection()){
+            String q="insert into projects(user_id,project_name) values(?,?)";
+            PreparedStatement ps=c.prepareStatement(q);
             ps.setInt(1,currentUserId);
             ps.setString(2,name);
-
             ps.executeUpdate();
-
-            System.out.println("Project created.");
-        }
-        catch(Exception e){
-            System.out.println("Error.");
-        }
+        }catch(Exception e){}
     }
 
     private void listProjects(){
-        try(Connection conn=db.getConnection()){
-            String sql="SELECT id,project_name FROM projects WHERE user_id=?";
-            PreparedStatement ps=conn.prepareStatement(sql);
+        try(Connection c=db.getConnection()){
+            String q="select id,project_name from projects where user_id=?";
+            PreparedStatement ps=c.prepareStatement(q);
             ps.setInt(1,currentUserId);
-
             ResultSet rs=ps.executeQuery();
 
             List<Integer> ids=new ArrayList<>();
 
-            System.out.println("\nProjects:");
             while(rs.next()){
                 int id=rs.getInt("id");
                 ids.add(id);
-                System.out.println(id+" -> "+rs.getString("project_name"));
+                System.out.println(id+" "+rs.getString("project_name"));
             }
 
-            if(ids.isEmpty()){
-                System.out.println("No projects.");
-                return;
+            if(ids.isEmpty()) return;
+
+            int pid=Integer.parseInt(scn.nextLine());
+
+            if(ids.contains(pid)){
+                projectMenu(pid);
             }
 
-            System.out.print("Enter id (0 back): ");
-            String input=scn.nextLine();
-
-            if(input.equals("0")) return;
-
-            try{
-                int pid=Integer.parseInt(input);
-                if(ids.contains(pid)){
-                    openProject(pid);
-                }
-                else{
-                    System.out.println("Invalid id.");
-                }
-            }
-            catch(Exception e){
-                System.out.println("Invalid input.");
-            }
-        }
-        catch(Exception e){
-            System.out.println("Error.");
-        }
+        }catch(Exception e){}
     }
 
-    private void openProject(int pid){
+    private void projectMenu(int pid){
         while(true){
-            System.out.println("1. Edit SRS");
-            System.out.println("2. Preview SRS");
-            System.out.println("3. Export PDF");
-            System.out.println("4. Delete Project");
-            System.out.println("5. Back");
+            System.out.println("1.Edit");
+            System.out.println("2.Preview");
+            System.out.println("3.Export");
+            System.out.println("4.Delete");
+            System.out.println("5.Back");
 
-            System.out.print("Select: ");
-            String choice=scn.nextLine();
+            String ch=scn.nextLine();
 
-            if(choice.equals("1")){
-                handleFileEdit(pid);
-            }
-            else if(choice.equals("2")){
-                handlePreview(pid);
-            }
-            else if(choice.equals("3")){
-                handlePdfExport(pid);
-            }
-            else if(choice.equals("4")){
-                handleDeleteProject(pid);
-                return;
-            }
-            else if(choice.equals("5")){
-                return;
-            }
-            else{
-                System.out.println("Invalid choice.");
-            }
+            if(ch.equals("1")) edit(pid);
+            else if(ch.equals("2")) preview(pid);
+            else if(ch.equals("3")) export(pid);
+            else if(ch.equals("4")) delete(pid);
+            else if(ch.equals("5")) return;
         }
     }
 
-    private void handleFileEdit(int pid){
+    private void edit(int pid){
         try{
-            String templatePath="src/resources/srs_template.json";
+            String path="src/resources/srs_template.json";
             JsonObject template=JsonParser.parseString(
-                java.nio.file.Files.readString(java.nio.file.Paths.get(templatePath))
+                java.nio.file.Files.readString(java.nio.file.Paths.get(path))
             ).getAsJsonObject();
 
             JsonObject result=new JsonObject();
 
-            System.out.println("\n========== SRS INPUT ==========\n");
+            process(template,result,"");
 
-            processJson(template,result,"");
+            save(pid,result.toString());
 
-            saveToDb(pid,result.toString());
-
-            System.out.println("\nSRS saved successfully.");
-        }
-        catch(Exception e){
-            System.out.println("Error.");
-        }
+        }catch(Exception e){}
     }
 
-    private void processJson(JsonObject template,JsonObject result,String prefix){
-        for(Map.Entry<String,JsonElement> entry:template.entrySet()){
-            String key=entry.getKey();
-            JsonElement value=entry.getValue();
+    private void process(JsonObject obj,JsonObject result,String prefix){
+        for(Map.Entry<String,JsonElement> e:obj.entrySet()){
+            String k=e.getKey();
+            JsonElement v=e.getValue();
 
-            if(value.isJsonObject()){
-                JsonObject obj=value.getAsJsonObject();
+            if(v.isJsonObject()){
+                JsonObject o=v.getAsJsonObject();
 
-                if(obj.has("content")){
-                    String label=obj.has("label")?obj.get("label").getAsString():key;
-                    String instruction=obj.has("instruction")?obj.get("instruction").getAsString():"";
-
-                    System.out.println("\n"+label);
-
-                    if(!instruction.equals("")){
-                        System.out.println("("+instruction+")");
-                    }
-
-                    System.out.print("Enter: ");
+                if(o.has("content")){
+                    String label=o.has("label")?o.get("label").getAsString():k;
+                    System.out.println(label);
                     String input=scn.nextLine();
-
-                    result.addProperty(prefix+key,input);
+                    result.addProperty(prefix+k,input);
                 }
 
-                processJson(obj,result,prefix+key+".");
+                process(o,result,prefix+k+".");
             }
         }
     }
 
-    private void handlePreview(int pid){
-        try(Connection conn=db.getConnection()){
-            String sql="SELECT content_json FROM srs_docs WHERE project_id=?";
-            PreparedStatement ps=conn.prepareStatement(sql);
+    private void preview(int pid){
+        try(Connection c=db.getConnection()){
+            String q="select content_json from srs_docs where project_id=?";
+            PreparedStatement ps=c.prepareStatement(q);
             ps.setInt(1,pid);
 
             ResultSet rs=ps.executeQuery();
@@ -301,141 +201,106 @@ public class tui{
                 String json=rs.getString("content_json");
 
                 if(json==null||json.equals("{}")){
-                    System.out.println("No data.");
+                    System.out.println("No data");
                     return;
                 }
-
-                System.out.println("\n----- SRS PREVIEW -----\n");
 
                 JsonObject obj=JsonParser.parseString(json).getAsJsonObject();
 
                 String lastSection="";
 
-                for(Map.Entry<String,JsonElement> entry:obj.entrySet()){
-                    String key=entry.getKey();
-                    String value=entry.getValue().getAsString();
+                for(Map.Entry<String,JsonElement> e:obj.entrySet()){
+                    String key=e.getKey();
+                    String val=e.getValue().getAsString();
 
                     key=key.replace("sections.","");
 
                     String[] parts=key.split("\\.");
 
                     if(parts.length>=1){
-                        String sectionPart=parts[0];
-                        String[] secSplit=sectionPart.split("_",2);
+                        String sec=parts[0];
+                        String[] sp=sec.split("_",2);
 
-                        String secNumber=secSplit[0];
-                        String secName=secSplit.length>1?secSplit[1]:"";
+                        String num=sp[0];
+                        String name=sp.length>1?sp[1]:"";
 
-                        String sectionDisplay=secNumber+". "+secName.replace("_"," ");
+                        String display=num+". "+name.replace("_"," ");
 
-                        if(!sectionDisplay.equals(lastSection)){
-                            System.out.println("\n"+sectionDisplay.toUpperCase());
-                            lastSection=sectionDisplay;
+                        if(!display.equals(lastSection)){
+                            System.out.println("\n"+display.toUpperCase());
+                            lastSection=display;
                         }
                     }
 
-                    String lastPart=parts[parts.length-1];
-                    String[] subSplit=lastPart.split("_",2);
+                    String last=parts[parts.length-1];
+                    String[] sub=last.split("_",2);
 
-                    String subDisplay=subSplit[0]+". "+(subSplit.length>1?subSplit[1]:"");
+                    String subd=sub[0]+". "+(sub.length>1?sub[1]:"");
 
-                    System.out.println("  "+subDisplay);
-                    System.out.println("    "+value+"\n");
+                    System.out.println("  "+subd);
+                    System.out.println("    "+val+"\n");
                 }
             }
-        }
-        catch(Exception e){
-            System.out.println("Preview error.");
-        }
+
+        }catch(Exception e){}
     }
 
-    private void handlePdfExport(int pid){
-        try(Connection conn=db.getConnection()){
-            String sql="SELECT p.project_name,s.content_json FROM projects p LEFT JOIN srs_docs s ON p.id=s.project_id WHERE p.id=?";
-            PreparedStatement ps=conn.prepareStatement(sql);
-
+    private void export(int pid){
+        try(Connection c=db.getConnection()){
+            String q="select p.project_name,s.content_json from projects p left join srs_docs s on p.id=s.project_id where p.id=?";
+            PreparedStatement ps=c.prepareStatement(q);
             ps.setInt(1,pid);
+
             ResultSet rs=ps.executeQuery();
 
             if(rs.next()){
                 String name=rs.getString("project_name");
                 String json=rs.getString("content_json");
 
-                String formatted=formatJsonToText(json);
+                StringBuilder sb=new StringBuilder();
 
-                byte[] pdf=DocumentGenerator.generateIEEEReport(name,currentUser,formatted);
+                JsonObject obj=JsonParser.parseString(json).getAsJsonObject();
 
-                FileOutputStream fos=new FileOutputStream(name.replaceAll("\\s+","_")+".pdf");
-                fos.write(pdf);
-                fos.close();
+                for(Map.Entry<String,JsonElement> e:obj.entrySet()){
+                    sb.append(e.getKey()).append("\n");
+                    sb.append(e.getValue().getAsString()).append("\n\n");
+                }
 
-                System.out.println("PDF exported.");
+                byte[] pdf=DocumentGenerator.generateIEEEReport(name,currentUser,sb.toString());
+
+                java.nio.file.Files.write(
+                    java.nio.file.Paths.get(name+".pdf"),
+                    pdf
+                );
+
+                System.out.println("Exported");
             }
-        }
-        catch(Exception e){
-            System.out.println("Export failed.");
-        }
+
+        }catch(Exception e){}
     }
 
-    private String formatJsonToText(String jsonStr){
-        if(jsonStr==null||jsonStr.equals("{}")) return "No data.";
-
-        StringBuilder sb=new StringBuilder();
-
-        try{
-            JsonObject obj=JsonParser.parseString(jsonStr).getAsJsonObject();
-
-            for(Map.Entry<String,JsonElement> entry:obj.entrySet()){
-                sb.append(entry.getKey().toUpperCase()).append("\n");
-                sb.append(entry.getValue().getAsString()).append("\n\n");
-            }
-        }
-        catch(Exception e){
-            return jsonStr;
-        }
-
-        return sb.toString();
-    }
-
-    private void handleDeleteProject(int pid){
-        System.out.print("Are you sure you want to delete this project? (yes/no): ");
-        String confirm=scn.nextLine();
-
-        if(!confirm.equalsIgnoreCase("yes")){
-            System.out.println("Cancelled.");
-            return;
-        }
-
-        try(Connection conn=db.getConnection()){
-            String sql1="DELETE FROM srs_docs WHERE project_id=?";
-            PreparedStatement ps1=conn.prepareStatement(sql1);
+    private void delete(int pid){
+        try(Connection c=db.getConnection()){
+            String q1="delete from srs_docs where project_id=?";
+            PreparedStatement ps1=c.prepareStatement(q1);
             ps1.setInt(1,pid);
             ps1.executeUpdate();
 
-            String sql2="DELETE FROM projects WHERE id=?";
-            PreparedStatement ps2=conn.prepareStatement(sql2);
+            String q2="delete from projects where id=?";
+            PreparedStatement ps2=c.prepareStatement(q2);
             ps2.setInt(1,pid);
             ps2.executeUpdate();
 
-            System.out.println("Project deleted successfully.");
-        }
-        catch(Exception e){
-            System.out.println("Delete failed.");
-        }
+        }catch(Exception e){}
     }
 
-    private void saveToDb(int pid,String json){
-        try(Connection conn=db.getConnection()){
-            String sql="INSERT INTO srs_docs (project_id,content_json,version) VALUES (?,?, '1.0') ON CONFLICT(project_id) DO UPDATE SET content_json=excluded.content_json";
-            PreparedStatement ps=conn.prepareStatement(sql);
-
+    private void save(int pid,String json){
+        try(Connection c=db.getConnection()){
+            String q="insert into srs_docs(project_id,content_json,version) values(?,?, '1.0') on conflict(project_id) do update set content_json=excluded.content_json";
+            PreparedStatement ps=c.prepareStatement(q);
             ps.setInt(1,pid);
             ps.setString(2,json);
-
             ps.executeUpdate();
-        }
-        catch(Exception e){
-            System.out.println("DB error.");
-        }
+        }catch(Exception e){}
     }
 }
