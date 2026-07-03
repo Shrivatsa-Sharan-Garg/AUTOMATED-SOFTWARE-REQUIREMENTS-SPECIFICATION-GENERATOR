@@ -49,13 +49,21 @@ jar-cart sync
 - Caches artifacts globally for reuse across projects.
 - Links dependencies into the project's `lib/` directory.
 
-### 3. Run the Project
+## 3. Run the Project
 
-Compile and run the project:
+Compile and launch the interactive CLI:
 
 ```bash
 jar-cart run src
 ```
+
+Launch the HTTP server:
+
+```bash
+jar-cart run src -- --server
+```
+
+> `jar-cart` uses the `--` separator to forward application arguments to your Java program (similar to npm).
 
 `jar-cart` automatically:
 
@@ -64,7 +72,12 @@ jar-cart run src
 - Resolves the complete classpath.
 - Launches the application.
 
----
+### Available Modes
+
+| Command                        | Description                                            |
+| ------------------------------ | ------------------------------------------------------ |
+| `jar-cart run src`             | Starts the interactive terminal (TUI).                 |
+| `jar-cart run src -- --server` | Starts the HTTP API server on `http://localhost:8080`. |
 
 ## ⚙️ Environment Configuration
 
@@ -108,6 +121,7 @@ src/db/srs.db
 
 ## 📝 Backend Features
 
+- ✅ Dual Execution Modes — Run as an interactive TUI or an HTTP API server.
 - ✅ Automated PDF Engine — Generates IEEE-standard PDF reports through the `/api/download-pdf` endpoint.
 - ✅ Zero-Config Dependency Management — Powered entirely by `jar-cart`.
 - ✅ Automatic Dependency Resolution — Downloads and manages all required libraries automatically.
