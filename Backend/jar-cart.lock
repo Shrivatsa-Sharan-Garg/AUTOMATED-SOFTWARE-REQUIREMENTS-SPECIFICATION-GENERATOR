@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "generated_at": "2026-07-03T12:13:27+05:30",
+  "dependencies": {
+    "commons-collections4-4.4.jar": {
+      "path": "lib\\commons-collections4-4.4.jar",
+      "size": 751914,
+      "sha256": "1df8b9430b5c8ed143d7815e403e33ef5371b2400aadbe9bda0883762e0846d1"
+    },
+    "dotenv-java-3.0.0.jar": {
+      "path": "lib\\dotenv-java-3.0.0.jar",
+      "size": 17102,
+      "sha256": "3c69e776c59c02b3e17951192a73df8eab187e59ed256488d6d05df1af9c04ba"
+    },
+    "gson-2.10.1.jar": {
+      "path": "lib\\gson-2.10.1.jar",
+      "size": 283367,
+      "sha256": "4241c14a7727c34feea6507ec801318a3d4a90f070e4525681079fb94ee4c593"
+    },
+    "openpdf-1.3.30.jar": {
+      "path": "lib\\openpdf-1.3.30.jar",
+      "size": 2128282,
+      "sha256": "6249b9b450af456f743ca3085663d7bb54814f7cc16644368795495457fd320a"
+    },
+    "poi-5.2.5.jar": {
+      "path": "lib\\poi-5.2.5.jar",
+      "size": 2976945,
+      "sha256": "352e1b44a5777af2df3d7dc408cda9f75f932d0e0125fa1a7d336a13c0a663a7"
+    },
+    "poi-ooxml-5.2.5.jar": {
+      "path": "lib\\poi-ooxml-5.2.5.jar",
+      "size": 2027116,
+      "sha256": "c6ad01a10cefa1d2a9c1b552bd4293a3eca29b513353f1ec814041d38da9ec5b"
+    },
+    "slf4j-api-1.7.36.jar": {
+      "path": "lib\\slf4j-api-1.7.36.jar",
+      "size": 41125,
+      "sha256": "d3ef575e3e4979678dc01bf1dcce51021493b4d11fb7f1be8ad982877c16a1c0"
+    },
+    "slf4j-simple-1.7.36.jar": {
+      "path": "lib\\slf4j-simple-1.7.36.jar",
+      "size": 15333,
+      "sha256": "2f39bed943d624dfa8f4102d0571283a10870b6aa36f197a8a506f147010c10f"
+    },
+    "sqlite-jdbc-3.45.2.0.jar": {
+      "path": "lib\\sqlite-jdbc-3.45.2.0.jar",
+      "size": 13511655,
+      "sha256": "a817162384b7d9d98fd616ca880bcbf2528cf29e31393666d2df85b307b03764"
+    },
+    "tomcat-servlet-api-9.0.55.jar": {
+      "path": "lib\\tomcat-servlet-api-9.0.55.jar",
+      "size": 284407,
+      "sha256": "c3bfdc4284ab4143cbdce5ba3fa8083e2ef45a65a59171c8c07bf6bfef80de03"
+    },
+    "xmlbeans-5.2.0.jar": {
+      "path": "lib\\xmlbeans-5.2.0.jar",
+      "size": 2198521,
+      "sha256": "5a344f323c049b7024edd39bbd58a38e77eb44218aad2794879e7f4ac3ca1de1"
+    }
+  }
+}

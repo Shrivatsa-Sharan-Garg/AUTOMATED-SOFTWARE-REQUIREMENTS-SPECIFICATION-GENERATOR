@@ -7,7 +7,7 @@ import com.sun.net.httpserver.HttpServer;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.net.InetSocketAddress;
 
-public class Main { 
+public class App { 
     public static void main(String[] args) throws Exception {
         Dotenv dotenv = Dotenv.configure().directory(".").load();
         String dbUrl = dotenv.get("DB_URL");

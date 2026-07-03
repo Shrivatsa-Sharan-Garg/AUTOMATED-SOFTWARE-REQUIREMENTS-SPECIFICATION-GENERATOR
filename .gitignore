@@ -5,3 +5,4 @@ lib/
 Backend/src/db
 Backend/bin/
 bin/
+.jar-cart/

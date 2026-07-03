@@ -1,6 +1,7 @@
 {
   "project": "Backend",
-  "strategy": "Include All Dependencies",
+  "java_version": "25",
+  "resolution_depth": "shallow",
   "dependencies": [
     {
       "group": "org.xerial",
@@ -46,29 +47,27 @@
     },
     {
       "group": "org.apache.poi",
+      "library": "poi",
+      "version": "5.2.5",
+      "dependencies": []
+    },
+    {
+      "group": "org.apache.poi",
       "library": "poi-ooxml",
       "version": "5.2.5",
-      "dependencies": [
-        {
-          "group": "org.apache.poi",
-          "library": "poi",
-          "version": "5.2.5",
-          "dependencies": [
-            {
-              "group": "org.apache.commons",
-              "library": "commons-collections4",
-              "version": "4.4",
-              "dependencies": []
-            }
-          ]
-        },
-        {
-          "group": "org.apache.xmlbeans",
-          "library": "xmlbeans",
-          "version": "5.2.0",
-          "dependencies": []
-        }
-      ]
+      "dependencies": []
+    },
+    {
+      "group": "org.apache.xmlbeans",
+      "library": "xmlbeans",
+      "version": "5.2.0",
+      "dependencies": []
+    },
+    {
+      "group": "org.apache.commons",
+      "library": "commons-collections4",
+      "version": "4.4",
+      "dependencies": []
     }
   ]
 }
