@@ -17,8 +17,9 @@ Backend/
 │   ├── db/              # Auto-generated SQLite Database (srs.db)
 │   ├── resources/       # JSON Templates
 │   ├── sql/             # Initialization & Query Scripts
-│   └── .env             # Environment Configuration
+│   └── .env             # Environment Configuration (place in root)
 ├── jar-cart.json        # Dependency Manifest
+├── jar-cart.lock        # Dependency Lockfile
 ├── .env
 └── README.md
 ```
